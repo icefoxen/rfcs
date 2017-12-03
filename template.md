@@ -15,6 +15,11 @@ One paragraph explanation of the feature.
 Why are we doing this? What use cases does it support? What is the expected
 outcome?
 
+# Terms and definitions
+[terms]: #terms
+
+What ideas and terms need to be introduced?
+
 # Detailed design
 [design]: #detailed-design
 
@@ -27,6 +32,11 @@ used.
 [drawbacks]: #drawbacks
 
 Why should we *not* do this?
+
+# Security considerations
+[security]: #security
+
+What kind of security questions does this raise?  Things to think about: Imitation/spoofing, network control (sybil attacks), denial of service attacks, information leakage (users being tricked into revealing things beyond the necessary.)
 
 # Alternatives
 [alternatives]: #alternatives
@@ -44,3 +54,7 @@ What parts of the design are still TBD or unknowns?
 What future work, if any, would be implied or impacted by this feature
 without being directly part of the work?
 
+# References/related works
+[references]: #references
+
+What other things are related to this that might be worth looking at?
