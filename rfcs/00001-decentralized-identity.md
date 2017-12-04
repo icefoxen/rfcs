@@ -84,12 +84,74 @@ that the message is valid, and if so, accepts it.
 
 JSON-RPC over HTTP(S).
 
-Defining a specific "envelope" format for a signed message may also be useful.
+Defining a specific "envelope" format for a signed message may also be
+useful.
 
+The actual public keys themselves may get stored in IPFS.  There's
+nothing particularly wrong with that.  ...In fact, an IPFS hash
+for a particular public key might be a *very* good unique
+identifier that makes this whole system unnecessary.  Downside, each
+key becomes basically a unique identity...  BUT, if it is signed by a
+previous key, then it becomes possible to make a continuous chain of
+trust for a given identity.
+
+Example, you start with a key for an identity:
+
+```json
+{
+    "id": "joe@example.com",
+    "created": "2017-12-03T13:59:01Z",
+	"key": "..."
+}
+```
+
+This gets published as an IPFS object with hash `QmKey1`.  You have
+the same system of a user submitting a request that's signed with the
+private key, and the server retrieving the public key to verify it.
+
+Now you want to update the public key.  You publish a new key and sign
+it with the old one:
+
+```json
+{
+    "id": "joe@example.com",
+    "created": "2017-12-04T00:00:01Z",
+	"key": "...",
+	"previous": "QmKey1",
+	"signature": "this object signed by QmKey1"
+}
+```
+
+This gets published as an IPFS object with the hash `QmKey2`.  
+
+Now when the user submits a request they sign it with the new key tell
+the server to use the key `QmKey2`.  The server checks the public key
+and says "oh this is not something I recognize from `joe@example.com`,
+but it has been signed by the previous key so I know it's legit".
+
+I actually like that quite a bit...
+
+It has some downsides though: The server can't know if a key has been
+replaced unless it is expired.  Fragile!  The key becomes the identity
+and the `id` field is mostly meaningless; two people may claim to have
+the same identity and have entirely separate keys.  How much this
+matters is debatable; maybe you can have Discord-style usernames such
+as `joe#QmKey1`, and whenever `joe` submits a message, even if it's
+signed with `QmKey2`, the device wanting to authenticate it knows that
+if it follows the signature chain backwards it should always end up at
+`QmKey1`.  If a different `joe` makes `joe#QmSomeOtherKey` then this
+is an entirely different identity.  It also means that if an identity
+gets lost there's no recovering it.
 
 ## Key format
 
 JSON.
+
+Actually, JSON might be problematic because of insignificant
+whitespace making two different formats of the same object maybe have
+different hashes.  CBOR may be better.  Or, JSON normalized down to a
+specific form, but at that point you might as well convert it to CBOR
+or such anyway.
 
 Algorithms?  Keep it bare-bones as possible.  Don't let an attacker
 choose an algorithm whenever possible.  Don't even bother with
@@ -97,7 +159,7 @@ less-than-ideal algorithms.
 
 ## Locating identity servers
 
-SRV records
+DNS SRV records
 
 ## Updating keys
 
@@ -111,7 +173,8 @@ be replaced with a new one).
 Keypairs should have creation dates and optionally expiration dates.
 When a key is updated it should be signed by the previous key (perhaps
 that should be a MUST?) to keep the chain of authenticity intact.  An
-identity server should always return the most recent key.
+identity server should always return the most recent key, but it
+should be possible to ask for older ones.
 
 Alterations to the public key on the server may be performed via
 messages signed with the matching private key.  Defining a specific
