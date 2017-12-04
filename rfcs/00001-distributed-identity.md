@@ -7,13 +7,13 @@ parent-rfc: "none"
 # Summary
 [summary]: #summary
 
-A protocol for a distributed public-key system that is independent of
-centralized authorities.  It provides authentication for identities
-(usernames) based off of a public key stored as an IPFS object, and
-allows publishing new keys with a chain of trust.  Critical features
-are: any system, human or machine, can take a message from a user
-signed with their private key, and retrieve that user's public key to
-verify the message.
+A protocol for a distributed public-key distribution system that is
+independent of centralized authorities.  It provides authentication
+for identities (usernames) based off of a public key stored as an IPFS
+object, and allows publishing new keys with a chain of trust.
+Critical features are: any system, human or machine, can take a
+message from a user signed with their private key, and retrieve that
+user's public key to verify the message.
 
 # Motivation
 [motivation]: #motivation
@@ -73,9 +73,9 @@ using this system needs to care* how the private keys are managed, so
 we leave it undefined.
 
 As an EXAMPLE, a user `joe#QmFoo` may want to submit a new post to a
-web forum.  He logs in to an identity server with a password and gets
-his private key.  His "submit new post" API call gets signed with the
-private key and sent to `different-example.com`.  The forum software
+web forum at `example.com`.  He plugs in his security token and
+unlocks his private key.  His "submit new post" API call gets signed
+with the private key and sent to `example.com`.  The forum software
 retrieves the public key with the CID `QmFoo` from IPFS.  It uses the
 public key to verify that the message indeeds come from `joe#QmFoo`,
 and if so, accepts it.
@@ -130,21 +130,20 @@ it with the old one:
 ```
 
 This gets published as an IPFS object with the hash `QmKey2`.
-Now when the user submits a request they sign it with the new key.  
+Now when the user submits a request they sign it with the new key.
 The server checks the public key and says "oh this is not `joe#QmKey1`
 but if I follow the chain backwards then it has been signed by
 `QmKey1` so I know it's a legit continuation of the same identity".
 
 ## Updating keys
 
-Part of the problem with GPG is that key management is a pain in the
-ass.  But, being able to expire and replace keys is critical for
-defensive security (replace a key if it gets compromised), pre-emptive
-hardening (it's harder to compromise a key if they change every N
-months), and usability (a hard drive crash destroys a key, it needs to
-be replaced with a new one).
+Key management is a pain in the ass.  But, being able to expire and
+replace keys is critical for defensive security (replace a key if it
+gets compromised), pre-emptive hardening (it's harder to compromise a
+key if they change every N months), and usability (a hard drive crash
+destroys a key, it needs to be replaced with a new one).
 
-This system cannot address these problems.  All it can do is allow
+This system cannot address all these problems.  All it can do is allow
 keys to have expiration dates, and allow a user to advertise a newer
 key that is authenticated by an older one.  There is no way to revoke
 compromised keys, no way to recover lost/destroyed private keys, and
@@ -162,16 +161,15 @@ See `Updating keys` section above for the main ones.  To summarize:
  * The hashes aren't SUPER human readable, which is potentially
    problematic... if someone's identity is
    `joe@QmT78zSuBmuS4z925WZfrqQ1qHaJ56DQaTfyMUF7F8ff5o` then it may be
-   possible to realtively easily forge an object with an IPFS hash
+   possible to relatively easily forge an object with an IPFS hash
    `QmT78...ff5o` that is easy to visually mistake for the proper
    hash.
  
 Most of these functions require some sort of updateable database or
-other method of indirection, which IPFS cannot provide.  This is
-intended to be the topic of a future RFC which will provide an
+other method of indirection, which IPFS cannot provide on its own.
+This is intended to be the topic of a future RFC which will provide an
 updateable way to associate a name (for example, one linked to a
-domain name, such as `joe@example.com`) to an identity stored in
-IPFS.
+domain name, such as `joe@example.com`) to an identity stored in IPFS.
 
 The other downside with a fully-distributed system is that sometimes
 having an identity backed by a particular domain/institution is
@@ -199,20 +197,14 @@ honestly start looking a bit like Kerberos, from what I understand.)
  * OAuth
  * OpenID (might be worth looking at?)
  * GPG -- find out more about API and automation level stuff.  My
-   impression is that GPG basically does all of this and more (you
-   have a web of trust instead of authorative servers), but in a very
-   ad-hoc way that is very inconvenient for users to deal with and
+   impression is that GPG basically does all of this and more, but I
+   have found it to be really inconvenient for users to deal with and
    very inconvenient for programs to interact with.  (How DO you
    request a key from a GPG key server?  I can't find documentation on
-   the protocol.)  Disadvantages are: Key management is hard, all the
-   message protocols and file formats and such are very email-oriented
-   and not really appropriate for signing API requests, it's old and
-   complicated with a million little frobs and switches and options
-   that are a huge pain in the butt, and despite being 30 years old
-   nobody still bloody uses it so there's no real cost to replacing it
-   with something new.  Despite all this, it might be best to use GPG
-   anyway.
-   
+   the protocol.)  Still, it deserves a good hard look, since I don't
+   know enough about it; there's lessons there to be learned.
+
+
 # Unresolved questions
 [unresolved]: #unresolved-questions
 
@@ -222,14 +214,15 @@ What systems don't I know about?**
 How do we nicely have an updateable database to associate nicer
 usernames to hashes?
 
-An actual web of trust would be nice!!!
+An actual web of trust would be nice!!!  How do we do that without
+publishing new keys?  Or do we just publish new keys whenever someone
+signs your key?  That might work out well actually...
 
 # Future work
 [future]: #future-work
 
 As mentioned, mapping updateable, location-based usernames such as
-`joe@example.com` to a particular hash would have some strong
-benefits.
+`joe@example.com` to a particular hash would have some benefits.
 
 # References/related works
 [references]: #references
