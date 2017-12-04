@@ -143,6 +143,29 @@ if it follows the signature chain backwards it should always end up at
 is an entirely different identity.  It also means that if an identity
 gets lost there's no recovering it.
 
+The other downside with a fully-distributed system is that sometimes
+having an identity backed by a particular domain/institution is
+*useful*.  `joe@microsoft.com` or `joe@harvard.edu` says a lot more
+than `joe#QmKey1` does.  This suggests a solution where we can have
+our cake and eat it as well though: The storage and transport of keys
+is fully distributed via IPFS, as outlined above, and then there is
+also an *optional* system of identity servers attached to domains.
+All the identity server has to do then is map a username to an
+IPFS-stored identity. That way Joe can have the identity `joe#QmKey1`
+with no strings attached and no central authorities involved, AND
+there can also be `joe@example.com` which just resolves to
+`joe#QmKey1`.
+
+So we can have our cake and eat it too.  ALL identities are backed by
+keys stored and distributed on IPFS with a content-addressed
+identifier attached.  You then also MAY have identities that are tied
+to a particular domain, with that domain running a service that maps
+location identifiers to content-addressed identifiers.  You can even,
+if you so wish, have `joe@QmWhatever`, where `QmWhatever` is an IPNS
+name.
+
+Bingo.
+
 ## Key format
 
 JSON.
