@@ -222,6 +222,8 @@ What systems don't I know about?**
 How do we nicely have an updateable database to associate nicer
 usernames to hashes?
 
+An actual web of trust would be nice!!!
+
 # Future work
 [future]: #future-work
 
